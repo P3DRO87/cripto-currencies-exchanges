@@ -1,0 +1,60 @@
+.overlay-background {
+  @media only screen and (max-width: 991px) {
+    top: 103px;
+  }
+  @media only screen and (max-width: 576px) {
+    top: 111px;
+  }
+  top: 57px;
+  border-radius: 0.25rem;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.4);
+  width: 84%;
+}
+
+.list-box-search {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  border-radius: 0.25rem;
+  overflow-y: auto;
+  max-height: 180px;
+  &::-webkit-scrollbar {
+    border: 2px;
+    width: 10px;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 4px solid transparent;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background-clip: padding-box;
+  }
+
+  &::-webkit-scrollbar {
+    width: 16px;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    font-size: 1.3em;
+    padding: 5px 0;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 0 4px 4px 0;
+    transition: background-color ease 0.3s;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    img {
+      border-radius: 50%;
+      max-width: 70px;
+      margin-left: 20px;
+    }
+    span {
+      margin-left: 5px;
+      transition: color ease 0.3s;
+    }
+  }
+}
