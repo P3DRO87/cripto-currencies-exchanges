@@ -1,107 +1,97 @@
 import React, { useContext, useEffect, useState } from "react";
+
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import MainLogo from "../assets/main-logo.png";
 import ListBoxSearch from "./ListBoxSearch";
 import { CoinContext } from "../context/CoinContext";
-import isObjEmpty from "../assets/js/is-object-empty";
 
-import axios from "axios";
+import { fetchCoins } from "../assets/js/fetchCoins";
 
 const Header = () => {
-  const { state, getCoin, searchCoins, getCoinMarkets } =
-    useContext(CoinContext);
-  const { coin, coinSearch, BASE_URL } = state;
+   const { pathname } = useLocation();
 
-  const isCorrectPath = window.location.pathname.includes("/coin");
-  const [isFocusInputActive, setIsFocusInputActive] = useState(false);
-  const [loadedCoins, setLoadedCoins] = useState([]);
+   const { state, getCoin, searchCoins } = useContext(CoinContext);
+   const { coin, coinSearch, BASE_URL, limit } = state;
 
-  const isListBoxActive =
-    !isObjEmpty(coin) && isCorrectPath && isFocusInputActive && coinSearch;
+   const [isFocusInputActive, setIsFocusInputActive] = useState(false);
+   const [loadedCoins, setLoadedCoins] = useState([]);
 
-  useEffect(() => {
-    document.addEventListener("click", (e) => {
-      !e.target.matches("#search") && setIsFocusInputActive(false);
-    });
+   const isCorrectPath = pathname.includes("/coin");
 
-    axios.get(`${BASE_URL}/assets?limit=130`).then((res) => {
-      isObjEmpty(coin)
-        ? setLoadedCoins(res.data.data.slice(0, 3))
-        : setLoadedCoins(res.data.data);
-    });
-  }, [BASE_URL, coin]);
+   const isListBoxActive = coin && isCorrectPath && isFocusInputActive && coinSearch;
 
-  const handleClick = () => {
-    getCoin({});
-    getCoinMarkets([]);
-  };
+   useEffect(() => {
+      document.addEventListener("click", (e) => {
+         !e.target.matches("#search") && setIsFocusInputActive(false);
+      });
 
-  return (
-    <header>
-      <div className="container-fluid">
-        <div className="row justify-content-between">
-          <div className="col-lg-auto col-sm-6">
-            <div className="logo-container">
-              <Link className="main-link d-flex" to="/">
-                <div className="img-logo-container">
-                  <img
-                    className="main-logo"
-                    src={MainLogo}
-                    alt="cripto coins..."
-                  />
-                </div>
-                <p>
-                  Criptocurrencies <span>Exchanges</span>
-                </p>
-              </Link>
+      fetchCoins(limit).then((coins) => {
+         !coin ? setLoadedCoins(coins.slice(0, 3)) : setLoadedCoins(coins);
+      });
+   }, [BASE_URL, coin, limit]);
+
+   const handleClick = () => getCoin(null);
+
+   return (
+      <header>
+         <div className="container-fluid">
+            <div className="row justify-content-between">
+               <div className="col-lg-3 col-sm-6">
+                  <div className="logo-container">
+                     <Link
+                        onClick={() => searchCoins("")}
+                        className="main-link d-flex"
+                        to="/"
+                     >
+                        <div className="img-logo-container">
+                           <img className="main-logo" src={MainLogo} alt="Cripto coins" />
+                        </div>
+                        <p>
+                           Criptocurrencies <span>Exchanges</span>
+                        </p>
+                     </Link>
+                  </div>
+               </div>
+               <div className="col-lg-4 col-sm-6 position-relative d-flex align-items-center">
+                  <div className="search-bar-container w-100">
+                     <input
+                        id="search"
+                        value={coinSearch}
+                        type="text"
+                        className="form-control"
+                        name="search"
+                        onChange={(e) => searchCoins(e.target.value)}
+                        onFocus={() => setIsFocusInputActive(true)}
+                        autoComplete="off"
+                     />
+                     <div className="search-icon-container">
+                        <i className="fas fa-search"></i>
+                     </div>
+                     {isListBoxActive && (
+                        <ListBoxSearch
+                           loadedCoins={loadedCoins}
+                           setIsFocusInputActive={setIsFocusInputActive}
+                        />
+                     )}
+                  </div>
+               </div>
+               <div className="col-lg-3 col-sm-12 d-flex align-items-center">
+                  <ul className="link-list">
+                     {loadedCoins.slice(0, 3).map((coin) => (
+                        <li key={coin.id}>
+                           <Link onClick={handleClick} to={`/coin/${coin.id}`}>
+                              {coin.name}
+                           </Link>
+                        </li>
+                     ))}
+                  </ul>
+               </div>
             </div>
-          </div>
-          <div className="col-lg-4 col-sm-6 position-relative d-flex align-items-center">
-            <div className="search-bar-container w-100">
-              <input
-                id="search"
-                value={coinSearch}
-                type="text"
-                className="form-control"
-                name="search"
-                onChange={(e) => searchCoins(e.target.value)}
-                onFocus={() => setIsFocusInputActive(true)}
-                autoComplete="off"
-              />
-              <div className="search-icon-container">
-                <i className="fas fa-search"></i>
-              </div>
-              {isListBoxActive && (
-                <ListBoxSearch
-                  loadedCoins={loadedCoins}
-                  setIsFocusInputActive={setIsFocusInputActive}
-                />
-              )}
-            </div>
-          </div>
-          <div className="col-lg-3 col-sm-12 d-flex align-items-center">
-            <ul className="link-list">
-              {loadedCoins.slice(0, 3).map((coin) => (
-                <li key={coin.id}>
-                  <Link
-                    onClick={() => {
-                      const isSamePath =
-                        window.location.pathname.split("coin/")[1] === coin.id;
-                      if (!isSamePath) handleClick();
-                    }}
-                    to={`/coin/${coin.id}`}
-                  >
-                    {coin.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
+         </div>
+      </header>
+   );
 };
 
 export default Header;

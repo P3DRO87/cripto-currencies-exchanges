@@ -6,19 +6,19 @@ import CoinDetail from "./pages/CoinDetail";
 import Home from "./pages/Home";
 
 const App = () => {
-  return (
-    <Router>
-      <CoinProvider>
-        <Header />
-        <main>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/coin/:id" component={CoinDetail} />
-          </Switch>
-        </main>
-      </CoinProvider>
-    </Router>
-  );
+   return (
+      <Router>
+         <CoinProvider>
+            <Header />
+            <main>
+               <Switch>
+                  <Route exact path="/" component={Home} />
+                  <Route exact path="/coin/:id" component={CoinDetail} />
+               </Switch>
+            </main>
+         </CoinProvider>
+      </Router>
+   );
 };
 
 export default App;
