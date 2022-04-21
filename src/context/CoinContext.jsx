@@ -23,12 +23,18 @@ export const CoinProvider = ({ children }) => {
 
    const [state, dispatch] = useReducer(CoinReducer, initialState);
 
-   const getCoins = async (limit = 30) => {
-      const res = await axios.get(`${BASE_URL}/assets?limit=${limit}`);
+   const getCoins = async () => {
+      const { coins } = state;
+
+      const limit = !coins ? 30 : 20;
+
+      const offset = coins?.length || 0;
+
+      const res = await axios.get(`${BASE_URL}/assets?limit=${limit}&offset=${offset}`);
 
       dispatch({
          type: "GET_COINS",
-         payload: res.data.data,
+         payload: !coins ? res.data.data : [...coins, ...res.data.data],
       });
    };
 
