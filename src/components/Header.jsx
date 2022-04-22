@@ -23,16 +23,28 @@ const Header = () => {
    const isListBoxActive = coin && isCorrectPath && isFocusInputActive && coinSearch;
 
    useEffect(() => {
+      let isMounted = true;
+
       document.addEventListener("click", (e) => {
          !e.target.matches("#search") && setIsFocusInputActive(false);
       });
 
       fetchCoins(limit).then((coins) => {
+         if (!isMounted) return;
+
          !coin ? setLoadedCoins(coins.slice(0, 3)) : setLoadedCoins(coins);
       });
+
+      return () => (isMounted = false);
    }, [BASE_URL, coin, limit]);
 
-   const handleClick = () => getCoin(null);
+   const handleClick = () => {
+      const [, , coinPathName] = pathname.split("/");
+
+      if (coinPathName === coin.id) return;
+
+      getCoin(null);
+   };
 
    return (
       <header>
