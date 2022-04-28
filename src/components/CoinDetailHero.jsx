@@ -32,7 +32,7 @@ const CoinDetailHero = () => {
          isMounted = false;
          clearInterval(interval);
       };
-   }, [coin.id, dispatch]);
+   }, [coin, dispatch]);
 
    return (
       <div className="container-fluid hero-background">

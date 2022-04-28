@@ -24,6 +24,8 @@ const CoinDetail = () => {
    useEffect(() => {
       let isMounted = true;
 
+      dispatch({ type: "GET_COIN", payload: null });
+
       if (!isMounted) return;
 
       fetchCoinDetail(id).then(([coin, coinH, coinM]) => {
@@ -32,7 +34,10 @@ const CoinDetail = () => {
          dispatch({ type: "GET_COIN_MARKET", payload: coinM.data.data });
       });
 
-      return () => (isMounted = false);
+      return () => {
+         dispatch({ type: "GET_COIN", payload: null });
+         isMounted = false;
+      };
    }, [BASE_URL, id, dispatch]);
 
    const dataHistoryCoin = () => coinHistory.map((h) => [h.date, parseFloat(h.priceUsd)]);
