@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { CoinContext } from "../context/CoinContext";
-import { dollarFilter, parseCurrencyPriceUsd } from "../assets/js/coin-filter";
+import { parseCurrencyPriceUsd, parsePriceUsd } from "../assets/js/coin-filter";
 import { AreaChart } from "react-chartkick";
 import "chartkick/chart.js";
 import Loader from "react-loader-spinner";
@@ -119,7 +119,7 @@ const CoinDetail = () => {
                                           <td>
                                              {item.baseSymbol} / {item.quoteSymbol}
                                           </td>
-                                          <td>{dollarFilter(coin.priceUsd, "$0.00a")}</td>
+                                          <td>{parsePriceUsd(coin.priceUsd)}</td>
                                           <td>
                                              {!item.exchangeUrl ? (
                                                 <ExchangeBtn item={item} index={index} />
