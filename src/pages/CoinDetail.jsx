@@ -26,8 +26,6 @@ const CoinDetail = () => {
 
       if (!isMounted) return;
 
-      dispatch({ type: "GET_COIN", payload: null });
-
       fetchCoinDetail(id).then(([coin, coinH, coinM]) => {
          dispatch({ type: "GET_COIN", payload: coin.data.data });
          dispatch({ type: "GET_COIN_HISTORY", payload: coinH.data.data });

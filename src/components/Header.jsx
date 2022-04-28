@@ -39,11 +39,9 @@ const Header = () => {
    }, [BASE_URL, coin, limit]);
 
    const handleClick = () => {
-      const [, , coinPathName] = pathname.split("/");
+      const [, , id] = pathname.split("/");
 
-      if (coinPathName === coin.id) return;
-
-      getCoin(null);
+      id === coin?.id && getCoin(null);
    };
 
    return (
