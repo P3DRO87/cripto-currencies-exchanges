@@ -9,11 +9,12 @@ import Loader from "react-loader-spinner";
 import ExchangeBtn from "../components/ExchangeBtn";
 import CoinDetailHero from "../components/CoinDetailHero";
 import { fetchCoinDetail } from "../assets/js/fetchCoins";
+import isObjEmpty from "../assets/js/is-object-empty";
 
 const CoinDetail = () => {
    const { state, dispatch } = useContext(CoinContext);
 
-   const { BASE_URL, coin, coinHistory, coinMarkets } = state;
+   const { coin, coinHistory, coinMarkets } = state;
 
    const { id } = useParams();
 
@@ -24,21 +25,16 @@ const CoinDetail = () => {
    useEffect(() => {
       let isMounted = true;
 
-      dispatch({ type: "GET_COIN", payload: null });
-
       if (!isMounted) return;
 
       fetchCoinDetail(id).then(([coin, coinH, coinM]) => {
+         console.log("cagar");
+
          dispatch({ type: "GET_COIN", payload: coin.data.data });
          dispatch({ type: "GET_COIN_HISTORY", payload: coinH.data.data });
          dispatch({ type: "GET_COIN_MARKET", payload: coinM.data.data });
       });
-
-      return () => {
-         dispatch({ type: "GET_COIN", payload: null });
-         isMounted = false;
-      };
-   }, [BASE_URL, id, dispatch]);
+   }, [id, dispatch]);
 
    const dataHistoryCoin = () => coinHistory.map((h) => [h.date, parseFloat(h.priceUsd)]);
 
@@ -50,7 +46,7 @@ const CoinDetail = () => {
 
    return (
       <>
-         {!coin && (
+         {isObjEmpty(coin) && (
             <div className="loader-container">
                <div className="container">
                   <div className="row justify-content-center">
@@ -61,7 +57,7 @@ const CoinDetail = () => {
                </div>
             </div>
          )}
-         {coin && (
+         {!isObjEmpty(coin) && (
             <>
                <CoinDetailHero />
                <div className="container">

@@ -12,7 +12,7 @@ import { fetchCoins } from "../assets/js/fetchCoins";
 const Header = () => {
    const { pathname } = useLocation();
 
-   const { state, searchCoins } = useContext(CoinContext);
+   const { state, searchCoins, getCoin } = useContext(CoinContext);
    const { coin, coinSearch, BASE_URL, limit } = state;
 
    const [isFocusInputActive, setIsFocusInputActive] = useState(false);
@@ -37,6 +37,12 @@ const Header = () => {
 
       return () => (isMounted = false);
    }, [BASE_URL, coin, limit]);
+
+   const handleResetCoin = () => {
+      const [, , id] = pathname.split("/");
+
+      if (coin.id !== id) getCoin({});
+   };
 
    return (
       <header>
@@ -84,7 +90,7 @@ const Header = () => {
                <div className="col-lg-3 col-sm-12 d-flex align-items-center">
                   <ul className="link-list">
                      {loadedCoins.slice(0, 3).map((coin) => (
-                        <li key={coin.id}>
+                        <li onClick={handleResetCoin} key={coin.id}>
                            <Link to={`/coin/${coin.id}`}>{coin.name}</Link>
                         </li>
                      ))}
