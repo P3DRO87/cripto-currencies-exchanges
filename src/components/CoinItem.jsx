@@ -20,8 +20,6 @@ const CoinItem = ({ coin, priceWs }) => {
    }, []);
 
    useEffect(() => {
-      let timeout;
-
       let isMounted = true;
 
       priceWs.onmessage = ({ data }) => {
@@ -33,12 +31,11 @@ const CoinItem = ({ coin, priceWs }) => {
             return priceWsUsd;
          });
 
-         timeout = setTimeout(() => isMounted && setFlashCoinClass(null), 700);
+         setTimeout(() => isMounted && setFlashCoinClass(null), 700);
       };
 
       return () => {
          priceWs.onmessage = null;
-         clearTimeout(timeout);
          isMounted = false;
       };
    }, [priceWs, coin.id]);
