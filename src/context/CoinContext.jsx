@@ -14,7 +14,7 @@ export const CoinProvider = ({ children }) => {
       socket: null,
       coins: null,
       filteredCoins: null,
-      limit: 2,
+      limit: 30,
       coin: null,
       coinSearch: "",
       coinHistory: [],
