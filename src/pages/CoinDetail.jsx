@@ -1,22 +1,19 @@
 import React, { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { CoinContext } from "../context/CoinContext";
-
-import { dollarFilter } from "../assets/js/coin-filter";
+import { dollarFilter, parseCurrencyPriceUsd } from "../assets/js/coin-filter";
 import { AreaChart } from "react-chartkick";
 import "chartkick/chart.js";
 import Loader from "react-loader-spinner";
 import ExchangeBtn from "../components/ExchangeBtn";
 import CoinDetailHero from "../components/CoinDetailHero";
 import { fetchCoinDetail } from "../assets/js/fetchCoins";
-import isObjEmpty from "../assets/js/is-object-empty";
 
 const CoinDetail = () => {
-   const { state, dispatch } = useContext(CoinContext);
-
-   const { coin, coinHistory, coinMarkets } = state;
-
    const { id } = useParams();
+
+   const { state, dispatch } = useContext(CoinContext);
+   const { coin, coinHistory, coinMarkets } = state;
 
    useEffect(() => {
       dispatch({ type: "SEARCH_COIN", payload: "" });
@@ -25,15 +22,25 @@ const CoinDetail = () => {
    useEffect(() => {
       let isMounted = true;
 
-      if (!isMounted) return;
+      const getCoinDetail = () => {
+         fetchCoinDetail(id)
+            .then(([coin, coinH, coinM]) => {
+               if (!isMounted) return;
 
-      fetchCoinDetail(id).then(([coin, coinH, coinM]) => {
-         console.log("cagar");
+               dispatch({ type: "GET_COIN", payload: coin.data.data });
+               dispatch({ type: "GET_COIN_HISTORY", payload: coinH.data.data });
+               dispatch({ type: "GET_COIN_MARKET", payload: coinM.data.data });
+            })
+            .catch(() => getCoinDetail());
+      };
 
-         dispatch({ type: "GET_COIN", payload: coin.data.data });
-         dispatch({ type: "GET_COIN_HISTORY", payload: coinH.data.data });
-         dispatch({ type: "GET_COIN_MARKET", payload: coinM.data.data });
-      });
+      getCoinDetail();
+
+      return () => {
+         isMounted = false;
+         dispatch({ type: "SEARCH_COIN", payload: "" });
+         dispatch({ type: "GET_COIN", payload: null });
+      };
    }, [id, dispatch]);
 
    const dataHistoryCoin = () => coinHistory.map((h) => [h.date, parseFloat(h.priceUsd)]);
@@ -46,7 +53,7 @@ const CoinDetail = () => {
 
    return (
       <>
-         {isObjEmpty(coin) && (
+         {!coin && (
             <div className="loader-container">
                <div className="container">
                   <div className="row justify-content-center">
@@ -57,7 +64,7 @@ const CoinDetail = () => {
                </div>
             </div>
          )}
-         {!isObjEmpty(coin) && (
+         {coin && (
             <>
                <CoinDetailHero />
                <div className="container">
@@ -65,13 +72,13 @@ const CoinDetail = () => {
                      <div className="col-lg-6">
                         <div className="price-info">
                            <p>
-                              HIGH: <span>${historyMax().toFixed(2)}</span>
+                              HIGH: <span>{parseCurrencyPriceUsd(historyMax())}</span>
                            </p>
                            <p>
-                              LOW: <span>${historyMin().toFixed(2)}</span>
+                              LOW: <span>{parseCurrencyPriceUsd(historyMin())}</span>
                            </p>
                            <p>
-                              AVERAGE: <span>${historyAvg().toFixed(2)}</span>
+                              AVERAGE: <span>{parseCurrencyPriceUsd(historyAvg())}</span>
                            </p>
                         </div>
                      </div>
@@ -140,5 +147,4 @@ const CoinDetail = () => {
       </>
    );
 };
-
 export default CoinDetail;

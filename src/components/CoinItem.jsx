@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { dollarFilter, percentFilter } from "../assets/js/coin-filter";
+import { dollarFilter, parsePriceUsd, percentFilter } from "../assets/js/coin-filter";
 
 const CoinItem = ({ coin, priceWs }) => {
    const [coinPriceUsd, setCoinPriceUsd] = useState(coin.priceUsd);
@@ -43,16 +43,6 @@ const CoinItem = ({ coin, priceWs }) => {
       };
    }, [priceWs, coin.id]);
 
-   const parsePriceUsd = () => {
-      const parsedPriceUsd = dollarFilter(coinPriceUsd || coin.priceUsd, "$0.00a");
-
-      const [, stringPrice] = parsedPriceUsd.split("$");
-
-      const priceUsdNum = +coin.priceUsd;
-
-      return stringPrice === "0.00" ? `$${priceUsdNum.toFixed(6)}` : parsedPriceUsd;
-   };
-
    return (
       <tr className={flashCoinClass ? flashCoinClass : undefined}>
          <td className="img-container">
@@ -78,7 +68,7 @@ const CoinItem = ({ coin, priceWs }) => {
             </a>
             <small>{coin.symbol}</small>
          </td>
-         <td>{parsePriceUsd()}</td>
+         <td>{parsePriceUsd(coinPriceUsd || coin.priceUsd)}</td>
          <td>{dollarFilter(coin.marketCapUsd, "$0.00a")}</td>
          <td
             className={`coin-percent ${

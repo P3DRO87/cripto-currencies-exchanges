@@ -23,16 +23,19 @@ const CoinTable = () => {
       let controller = new AbortController();
       const { signal } = controller;
 
-      fetchCoins(limit, signal)
-         .then((coins) => {
-            dispatch({ type: "GET_COINS", payload: coins });
-         })
-         .catch((e) => e)
-         .finally(() => {
-            if (!isMounted) return;
+      const getCoins = () => {
+         fetchCoins({ limit, signal })
+            .then((coins) => {
+               dispatch({ type: "GET_COINS", payload: coins });
+            })
+            .catch(() => null)
+            .finally(() => {
+               if (!isMounted) return;
+               setIsLoading(false);
+            });
+      };
 
-            setIsLoading(false);
-         });
+      getCoins();
 
       return () => {
          isMounted = false;
@@ -44,7 +47,7 @@ const CoinTable = () => {
       let interval;
 
       interval = setInterval(() => {
-         fetchCoins(limit)
+         fetchCoins({ limit })
             .then((coins) => {
                dispatch({ type: "GET_COINS", payload: coins });
             })

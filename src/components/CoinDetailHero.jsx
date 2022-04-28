@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { CoinContext } from "../context/CoinContext";
 
-import { dollarFilter, percentFilter } from "../assets/js/coin-filter";
+import {
+   dollarFilter,
+   parseCurrencyPriceUsd,
+   percentFilter,
+} from "../assets/js/coin-filter";
 import { fetchCoin } from "../assets/js/fetchCoins";
 
 const CoinDetailHero = () => {
@@ -65,12 +69,7 @@ const CoinDetailHero = () => {
                      </div>
                   </div>
                   <div className="price-usd-container d-flex align-items-center">
-                     <h3 className="me-3">
-                        {parseFloat(coin.priceUsd).toLocaleString("en-US", {
-                           style: "currency",
-                           currency: "USD",
-                        })}
-                     </h3>
+                     <h3 className="me-3">{parseCurrencyPriceUsd(coin.priceUsd)}</h3>
                      <h5
                         className={`${
                            coin.changePercent24Hr.includes("-") ? "danger" : "success"

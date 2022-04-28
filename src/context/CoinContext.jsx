@@ -15,7 +15,7 @@ export const CoinProvider = ({ children }) => {
       coins: null,
       filteredCoins: null,
       limit: 30,
-      coin: {},
+      coin: null,
       coinSearch: "",
       coinHistory: [],
       coinMarkets: [],
