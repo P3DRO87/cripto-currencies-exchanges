@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useParams } from "react-router";
 import { CoinContext } from "../context/CoinContext";
-import { parseCurrencyPriceUsd, parsePriceUsd } from "../assets/js/coin-filter";
+import { parsePriceInfo, parsePriceUsd } from "../assets/js/coin-filter";
 import { AreaChart } from "react-chartkick";
 import "chartkick/chart.js";
 import Loader from "react-loader-spinner";
@@ -10,10 +10,11 @@ import CoinDetailHero from "../components/CoinDetailHero";
 import { fetchCoinDetail } from "../assets/js/fetchCoins";
 
 const CoinDetail = () => {
-   const { id } = useParams();
-
    const { state, dispatch } = useContext(CoinContext);
-   const { coin, coinHistory, coinMarkets } = state;
+
+   const { BASE_URL, coin, coinHistory, coinMarkets } = state;
+
+   const { id } = useParams();
 
    useEffect(() => {
       dispatch({ type: "SEARCH_COIN", payload: "" });
@@ -22,7 +23,7 @@ const CoinDetail = () => {
    useEffect(() => {
       let isMounted = true;
 
-      const getCoinDetail = () => {
+      const fetchCoin = () => {
          fetchCoinDetail(id)
             .then(([coin, coinH, coinM]) => {
                if (!isMounted) return;
@@ -31,17 +32,16 @@ const CoinDetail = () => {
                dispatch({ type: "GET_COIN_HISTORY", payload: coinH.data.data });
                dispatch({ type: "GET_COIN_MARKET", payload: coinM.data.data });
             })
-            .catch(() => getCoinDetail());
+            .catch((e) => e && fetchCoin());
       };
 
-      getCoinDetail();
+      fetchCoin();
 
       return () => {
          isMounted = false;
-         dispatch({ type: "SEARCH_COIN", payload: "" });
          dispatch({ type: "GET_COIN", payload: null });
       };
-   }, [id, dispatch]);
+   }, [BASE_URL, id, dispatch]);
 
    const dataHistoryCoin = () => coinHistory.map((h) => [h.date, parseFloat(h.priceUsd)]);
 
@@ -72,13 +72,13 @@ const CoinDetail = () => {
                      <div className="col-lg-6">
                         <div className="price-info">
                            <p>
-                              HIGH: <span>{parseCurrencyPriceUsd(historyMax())}</span>
+                              HIGH: <span>${parsePriceInfo(historyMax())}</span>
                            </p>
                            <p>
-                              LOW: <span>{parseCurrencyPriceUsd(historyMin())}</span>
+                              LOW: <span>${parsePriceInfo(historyMin())}</span>
                            </p>
                            <p>
-                              AVERAGE: <span>{parseCurrencyPriceUsd(historyAvg())}</span>
+                              AVERAGE: <span>${parsePriceInfo(historyAvg())}</span>
                            </p>
                         </div>
                      </div>

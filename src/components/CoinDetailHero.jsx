@@ -20,23 +20,15 @@ const CoinDetailHero = () => {
 
    useEffect(() => {
       let interval;
-      let isMounted = true;
 
       interval = setInterval(() => {
          fetchCoin(coin.id)
-            .then((coin) => {
-               if (!isMounted) return;
-
-               dispatch({ type: "GET_COIN", payload: coin });
-            })
+            .then((coin) => dispatch({ type: "GET_COIN", payload: coin }))
             .catch((e) => e);
       }, 10000);
 
-      return () => {
-         isMounted = false;
-         clearInterval(interval);
-      };
-   }, [coin, dispatch]);
+      return () => clearInterval(interval);
+   }, [coin.id, dispatch]);
 
    return (
       <div className="container-fluid hero-background">

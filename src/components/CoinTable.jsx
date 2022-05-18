@@ -18,19 +18,24 @@ const CoinTable = () => {
    const [pricesWs, setPricesWs] = useState(socket);
 
    useEffect(() => {
+      dispatch({ type: "SEARCH_COIN", payload: "" });
+   }, [dispatch]);
+
+   useEffect(() => {
       let isMounted = true;
 
       let controller = new AbortController();
       const { signal } = controller;
 
       const getCoins = () => {
-         fetchCoins({ limit, signal })
+         fetchCoins(limit, signal)
             .then((coins) => {
                dispatch({ type: "GET_COINS", payload: coins });
             })
             .catch(() => null)
             .finally(() => {
                if (!isMounted) return;
+
                setIsLoading(false);
             });
       };
@@ -47,7 +52,7 @@ const CoinTable = () => {
       let interval;
 
       interval = setInterval(() => {
-         fetchCoins({ limit })
+         fetchCoins(limit)
             .then((coins) => {
                dispatch({ type: "GET_COINS", payload: coins });
             })
@@ -114,7 +119,7 @@ const CoinTable = () => {
                         <tbody>
                            {isLoading && <SkeletonLoader />}
                            {!isLoading &&
-                              (filteredCoins.length ? (
+                              (filteredCoins?.length ? (
                                  filteredCoins.map((coin, index) => (
                                     <CoinItem
                                        key={coin.id}

@@ -12,23 +12,24 @@ export const percentFilter = (value) => {
    return `${Number(value).toFixed(2)}%`;
 };
 
-export const parsePriceUsd = (priceUsd) => {
-   const numPriceUsd = parseFloat(priceUsd);
+export const parsePriceUsd = (coinPrice) => {
+   const parsedCoinPrice = parseFloat(coinPrice);
 
-   const parsedPriceUsd = dollarFilter(numPriceUsd, "$0.00a");
+   const parsedPriceUsd = dollarFilter(parsedCoinPrice, "$0.00a");
 
    const [, stringPrice] = parsedPriceUsd.split("$");
 
-   return stringPrice === "0.00" ? `$${numPriceUsd.toFixed(6)}` : parsedPriceUsd;
+   return stringPrice === "0.00" ? `$${parsedCoinPrice.toFixed(6)}` : parsedPriceUsd;
 };
 
 export const parseCurrencyPriceUsd = (priceUsd) => {
-   const currencyPriceUsd = parseFloat(priceUsd).toLocaleString("en-US", {
+   const priceUsdCurrency = parseFloat(priceUsd).toLocaleString("en-US", {
       style: "currency",
       currency: "USD",
    });
 
-   return currencyPriceUsd === ("$0.00" || "0.00")
-      ? `$${parseFloat(priceUsd).toFixed(6)}`
-      : currencyPriceUsd;
+   return priceUsdCurrency === "$0.00" ? parsePriceUsd(priceUsd) : priceUsdCurrency;
+};
+export const parsePriceInfo = (priceUsd) => {
+   return priceUsd.toFixed(2) === "0.00" ? priceUsd.toFixed(6) : priceUsd.toFixed(2);
 };

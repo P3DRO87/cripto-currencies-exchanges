@@ -2,8 +2,8 @@ import axios from "axios";
 
 const BASE_URL = "https://api.coincap.io/v2";
 
-export const fetchCoins = async ({ limit = 30, offset = 0, signal } = {}) => {
-   return fetch(`${BASE_URL}/assets?limit=${limit}&offset=${offset}`, { signal })
+export const fetchCoins = async (limit = 30, signal) => {
+   return fetch(`${BASE_URL}/assets?limit=${limit}`, { signal })
       .then((res) => res.json())
       .then((res) => res.data);
 };

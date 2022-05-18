@@ -9,27 +9,28 @@ const Header = () => {
    const { pathname } = useLocation();
 
    const { state, searchCoins } = useContext(CoinContext);
-   const { coin, coinSearch, limit } = state;
+   const { coin, coinSearch, BASE_URL, limit } = state;
+
+   const isCorrectPath = pathname.includes(coin?.id);
+
    const [isFocusInputActive, setIsFocusInputActive] = useState(false);
    const [loadedCoins, setLoadedCoins] = useState([]);
-
-   const isCorrectPath = pathname.includes("/coin");
-
    const isListBoxActive = coin && isCorrectPath && isFocusInputActive && coinSearch;
-
    useEffect(() => {
+      let isMounted = true;
+
       document.addEventListener("click", (e) => {
          !e.target.matches("#search") && setIsFocusInputActive(false);
       });
 
-      const getCoins = () => {
-         fetchCoins({ limit })
-            .then((coins) => setLoadedCoins(coins))
-            .catch(() => getCoins());
-      };
+      fetchCoins(limit).then((coins) => {
+         if (!isMounted) return;
 
-      getCoins();
-   }, [coin, limit]);
+         setLoadedCoins(coins);
+      });
+
+      return () => (isMounted = false);
+   }, [BASE_URL, coin, limit]);
 
    return (
       <header>
