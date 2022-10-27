@@ -47,7 +47,8 @@ const Header = () => {
                            />
                         </div>
                         <p>
-                           Criptocurrencies <span>Exchanges</span>
+                           <span>Cryptocurrencies </span>
+                           <span>Exchanges</span>
                         </p>
                      </Link>
                   </div>
